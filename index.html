@@ -3,132 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crónicas | Batalla de Desafíos</title>
+    <title>Crónicas | Batalla de Decisiones</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #020617; --card: #0f172a; --neon: #22d3ee; --gold: #fbbf24; }
+        :root { --bg: #020617; --card: #0f172a; --neon: #22d3ee; --gold: #fbbf24; --border: #334155; }
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f1f5f9; display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh; }
-        .app { width: 100%; max-width: 450px; }
-        .card { background: var(--card); border: 2px solid var(--neon); padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); width: 100%; }
-        .btn { width: 100%; padding: 14px; background: var(--neon); color: #020617; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: 'Cinzel'; text-transform: uppercase; font-size: 1rem; }
-        .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .mission { display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.95rem; }
-        .kingdom { background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 8px; margin: 8px 0; border-left: 3px solid var(--neon); }
-        textarea { width: 100%; height: 120px; background: #020617; border: 1px solid var(--neon); border-radius: 8px; color: white; padding: 12px; margin-top: 5px; font-size: 16px; }
-        .badge { font-size: 0.75rem; color: var(--gold); display: none; font-weight: bold; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f1f5f9; padding: 10px; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
+        
+        .app { width: 100%; max-width: 400px; }
+        .card { background: var(--card); border: 2px solid var(--neon); padding: 20px; border-radius: 16px; }
+        
+        h1, h2 { font-family: 'Cinzel', serif; color: var(--neon); text-align: center; margin: 0 0 15px 0; }
+        
+        .nav-week { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
+        .nav-btn { background: none; border: 1px solid var(--neon); color: var(--neon); padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+
+        .mission { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 1rem; }
+        
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px; margin: 5px 0; background: #020617; border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 16px; }
+        textarea { height: 100px; resize: none; }
+
+        .btn { width: 100%; padding: 14px; background: var(--neon); color: #020617; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; font-family: 'Cinzel'; text-transform: uppercase; }
+
+        .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .w-block { border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; }
+        .w-title { color: var(--neon); font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; text-align: center; }
+        
+        .credits { text-align: center; font-size: 0.7rem; color: #475569; margin-top: 20px; font-family: 'Cinzel'; }
         .hidden { display: none !important; }
-        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--neon); }
-        input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--neon); background: #020617; color: white; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="authScreen" class="app">
-        <div class="card">
-            <h1 style="font-family: 'Cinzel'; font-size: 1.5rem;">CRÓNICAS: UNA BATALLA DE DESAFÍOS</h1>
-            <input type="text" id="inName" placeholder="Tu nombre">
-            <input type="password" id="inPass" placeholder="Clave secreta">
-            <button class="btn" onclick="auth()">INICIAR GESTA</button>
-        </div>
+<div id="authScreen" class="app"><div class="card">
+    <h1>CRÓNICAS: UNA BATALLA DE DECISIONES</h1>
+    <input type="text" id="inName" placeholder="Tu nombre">
+    <input type="password" id="inPass" placeholder="Clave secreta">
+    <select id="role"><option value="guerrero">Rol: Guerrero</option><option value="rey">Rol: Rey</option></select>
+    <button class="btn" onclick="initApp()">INICIAR GESTA</button>
+    <div class="credits">Diseñado por Bladdo</div>
+</div></div>
+
+<div id="mainApp" class="app hidden"><div class="card">
+    <h2 id="uDisplay"></h2>
+    
+    <div class="nav-week">
+        <button class="nav-btn" onclick="changeWeek(-1)">◀</button>
+        <span id="weekLabel" style="font-weight:bold;">Semana 1</span>
+        <button class="nav-btn" onclick="changeWeek(1)">▶</button>
     </div>
 
-    <div id="mainApp" class="app hidden">
-        <div class="card">
-            <h2 id="uNameDisplay" style="color:var(--neon); text-align:center; margin: 0 0 15px 0;">Guerrero</h2>
-            
-            <div class="week-nav">
-                <button class="btn" style="width:auto; margin:0;" onclick="move(-1)">◄</button>
-                <h3 id="weekLabel" style="margin:0;">Semana 1</h3>
-                <button class="btn" style="width:auto; margin:0;" onclick="move(1)">►</button>
-            </div>
+    <div id="tasks">
+        <label class="mission"><input type="checkbox" id="t1" onchange="save()"> Leer Lección (5)</label>
+        <label class="mission"><input type="checkbox" id="t2" onchange="save()"> Oración (5)</label>
+        <label class="mission"><input type="checkbox" id="t3" onchange="save()"> Compartir Fe (5)</label>
+        <label class="mission"><input type="checkbox" id="t4" onchange="save()"> Aprender Verso (5)</label>
+    </div>
+    
+    <h3 style="color:var(--neon); margin: 20px 0 10px 0;">Diario Personal</h3>
+    <textarea id="diary" oninput="save()" placeholder="Escribe tus reflexiones..."></textarea>
 
-            <label class="mission"><input type="checkbox" id="t1" onchange="save()"> Leer Lección (5 pts)</label>
-            <label class="mission"><input type="checkbox" id="t2" onchange="save()"> Oración (5 pts)</label>
-            <label class="mission"><input type="checkbox" id="t3" onchange="save()"> Compartir Fe (5 pts)</label>
-            <label class="mission"><input type="checkbox" id="t4" onchange="save()"> Aprender Verso (5 pts)</label>
-            
-            <h3 style="color:var(--neon); margin:20px 0 10px 0;">Reinos Conquistados</h3>
-            <div id="kingdomsArea"></div>
-
-            <h3 style="color:var(--neon); margin:20px 0 5px 0;">Diario (1pt/palabra)</h3>
-            <textarea id="diary" oninput="save()" placeholder="Escribe tus reflexiones..."></textarea>
-            
-            <button class="btn" style="background:var(--gold); margin-top:20px;" onclick="seal()">SELLAR SEMANA</button>
-            <p id="ptsDisplay" style="font-size: 1.8rem; text-align:center; color:var(--gold); margin:20px 0;">Pts: 0</p>
-            <button class="btn" style="background:#475569; color:white;" onclick="location.reload()">CERRAR SESIÓN</button>
-        </div>
+    <div id="kingPanel" class="hidden">
+        <h3 style="color:var(--neon); margin-top:20px;">Puntos de mis 15 Guerreros</h3>
+        <div id="warriorInputs" class="w-grid"></div>
     </div>
 
-    <script>
-        const S = localStorage;
-        let cw = 1, mw = parseInt(S.getItem('mw')) || 1;
-        const kingdoms = ["Babilonia", "Medo-Persa", "Grecia", "Roma", "Asiria", "Nueva Jerusalén"];
+    <button class="btn" style="background:var(--gold)" onclick="sealWeek()">SELLAR SEMANA</button>
+    <h2 id="ptsDisplay" style="color:var(--gold); margin-top:20px;">Total: 0 pts</h2>
+    <button class="btn" style="background:#475569; color:white;" onclick="location.reload()">CERRAR SESIÓN</button>
+    <div class="credits">Diseñado por Bladdo</div>
+</div></div>
 
-        function auth() {
-            const n = document.getElementById('inName').value;
-            const p = document.getElementById('inPass').value;
-            if(n && p.length>=4) { S.setItem('u', n); S.setItem('user_pass', p); enterApp(); }
+<script>
+    let state = { name: '', pass: '', role: '', week: 1, maxW: 1 };
+
+    function initApp() {
+        state.name = document.getElementById('inName').value;
+        state.pass = document.getElementById('inPass').value;
+        state.role = document.getElementById('role').value;
+        if(!state.name || !state.pass) return alert("Completa los datos");
+        state.maxW = parseInt(localStorage.getItem(`mw_${state.name}_${state.pass}`)) || 1;
+        state.week = state.maxW;
+        
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('uDisplay').innerText = state.role.toUpperCase() + ": " + state.name;
+
+        if(state.role === 'rey') {
+            document.getElementById('kingPanel').classList.remove('hidden');
+            let wCont = document.getElementById('warriorInputs');
+            wCont.innerHTML = "";
+            for(let i=0; i<15; i++) {
+                wCont.innerHTML += `
+                    <div class="w-block">
+                        <div class="w-title">Guerrero ${i+1}</div>
+                        <input type="number" placeholder="Puntos" id="w${i}" class="w-input" oninput="save()">
+                    </div>`;
+            }
         }
+        loadWeek();
+    }
 
-        function enterApp() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('uNameDisplay').innerText = "Guerrero: " + S.getItem('u');
-            
-            const kArea = document.getElementById('kingdomsArea');
-            kingdoms.forEach((k, i) => {
-                kArea.innerHTML += `<div class="kingdom">
-                    <label style="display:flex; align-items:center; gap:10px;">
-                        <input type="checkbox" id="k${i}" onchange="save()"> <b>${k}</b>
-                    </label>
-                    <span id="badge${i}" class="badge">★ INSIGNIA</span>
-                </div>`;
-            });
-            refresh();
+    function changeWeek(d) {
+        state.week = Math.max(1, Math.min(state.maxW, state.week + d));
+        refreshUI();
+    }
+
+    function save() {
+        if(state.week < state.maxW) return;
+        let data = {
+            t1: document.getElementById('t1').checked, t2: document.getElementById('t2').checked,
+            t3: document.getElementById('t3').checked, t4: document.getElementById('t4').checked,
+            diary: document.getElementById('diary').value,
+            warriors: [], sealed: false
+        };
+        if(state.role === 'rey') {
+            for(let i=0; i<15; i++) data.warriors.push(document.getElementById('w'+i).value);
         }
+        localStorage.setItem(`cr_${state.name}_${state.pass}_w${state.week}`, JSON.stringify(data));
+        calcPoints(data);
+    }
 
-        function save() {
-            const texto = document.getElementById('diary').value.trim();
-            const palabras = texto ? texto.split(/\s+/).length : 0;
-            const ptsDiario = Math.min(palabras, 100);
+    function loadWeek() {
+        let raw = localStorage.getItem(`cr_${state.name}_${state.pass}_w${state.week}`);
+        state.data = raw ? JSON.parse(raw) : {t1:false, t2:false, t3:false, t4:false, diary:'', warriors:[], sealed: false};
+        refreshUI();
+    }
 
-            let data = {
-                t1: document.getElementById('t1').checked,
-                t2: document.getElementById('t2').checked,
-                t3: document.getElementById('t3').checked,
-                t4: document.getElementById('t4').checked,
-                dia: texto,
-                k: kingdoms.map((_, i) => document.getElementById('k'+i).checked)
-            };
-            
-            let pts = (data.t1?5:0) + (data.t2?5:0) + (data.t3?5:0) + (data.t4?5:0) + ptsDiario;
-            data.k.forEach((checked, i) => {
-                if(checked) { pts += 50; document.getElementById('badge'+i).style.display = 'block'; }
-                else { document.getElementById('badge'+i).style.display = 'none'; }
-            });
-            
-            S.setItem('w_'+cw, JSON.stringify(data));
-            document.getElementById('ptsDisplay').innerText = "Pts: " + pts;
+    function refreshUI() {
+        loadWeek();
+        let d = state.data;
+        document.getElementById('weekLabel').innerText = "Semana " + state.week;
+        document.getElementById('t1').checked = d.t1;
+        document.getElementById('t2').checked = d.t2;
+        document.getElementById('t3').checked = d.t3;
+        document.getElementById('t4').checked = d.t4;
+        document.getElementById('diary').value = d.diary;
+        if(state.role === 'rey') {
+            for(let i=0; i<15; i++) document.getElementById('w'+i).value = d.warriors[i] || '';
         }
+        let inputs = document.querySelectorAll('#tasks input, #diary, #warriorInputs input');
+        inputs.forEach(i => i.disabled = (state.week < state.maxW));
+        document.querySelector('button[onclick="sealWeek()"]').disabled = (state.week < state.maxW);
+        calcPoints(d);
+    }
 
-        function move(dir) { cw = Math.max(1, Math.min(mw, cw + dir)); refresh(); }
+    function calcPoints(d) {
+        let p = (d.t1?5:0) + (d.t2?5:0) + (d.t3?5:0) + (d.t4?5:0) + Math.min(d.diary.length, 100);
+        if(state.role === 'rey') d.warriors.forEach(v => p += parseInt(v || 0));
+        document.getElementById('ptsDisplay').innerText = "Total: " + p + " pts";
+    }
 
-        function seal() {
-            if(confirm("¿Sellar semana " + cw + " y abrir nueva?")) { mw++; S.setItem('mw', mw); cw = mw; refresh(); }
-        }
-
-        function refresh() {
-            document.getElementById('weekLabel').innerText = "Semana " + cw;
-            const d = JSON.parse(S.getItem('w_'+cw)) || {t1:false, t2:false, t3:false, t4:false, dia:"", k:[]};
-            document.getElementById('t1').checked = d.t1;
-            document.getElementById('t2').checked = d.t2;
-            document.getElementById('t3').checked = d.t3;
-            document.getElementById('t4').checked = d.t4;
-            document.getElementById('diary').value = d.dia || "";
-            if(d.k) d.k.forEach((v, i) => { document.getElementById('k'+i).checked = v; });
-            save();
-        }
-    </script>
+    function sealWeek() {
+        if(!confirm("¿Sellar semana " + state.week + "?")) return;
+        save();
+        state.data.sealed = true;
+        localStorage.setItem(`cr_${state.name}_${state.pass}_w${state.week}`, JSON.stringify(state.data));
+        state.maxW++;
+        localStorage.setItem(`mw_${state.name}_${state.pass}`, state.maxW);
+        state.week = state.maxW;
+        refreshUI();
+    }
+</script>
 </body>
 </html>
