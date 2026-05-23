@@ -2,22 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Misión 7-70 | Crónicas</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #020617; --card: #0f172a; --neon: #22d3ee; --gold: #fbbf24; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f1f5f9; display: flex; justify-content: center; padding: 10px; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #f1f5f9; display: flex; justify-content: center; padding: 10px; margin: 0; min-height: 100vh; }
         .app { width: 100%; max-width: 450px; }
-        .card { background: var(--card); border: 2px solid var(--neon); padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); }
-        .btn { width: 100%; padding: 12px; background: var(--neon); color: #020617; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: 'Cinzel'; text-transform: uppercase; }
+        .card { background: var(--card); border: 2px solid var(--neon); padding: 20px; border-radius: 20px; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); width: 100%; }
+        .btn { width: 100%; padding: 14px; background: var(--neon); color: #020617; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: 'Cinzel'; text-transform: uppercase; font-size: 1rem; }
         .week-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .mission { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
-        .kingdom { background: rgba(34, 211, 238, 0.05); padding: 10px; border-radius: 8px; margin: 8px 0; border-left: 3px solid var(--neon); }
-        textarea { width: 100%; height: 80px; background: #020617; border: 1px solid var(--neon); border-radius: 8px; color: white; padding: 10px; margin-top: 5px; box-sizing: border-box; }
+        .mission { display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.95rem; }
+        .kingdom { background: rgba(34, 211, 238, 0.05); padding: 12px; border-radius: 8px; margin: 8px 0; border-left: 3px solid var(--neon); }
+        textarea { width: 100%; height: 120px; background: #020617; border: 1px solid var(--neon); border-radius: 8px; color: white; padding: 12px; margin-top: 5px; font-size: 16px; /* 16px evita zoom automático en iOS */ }
         .badge { font-size: 0.75rem; color: var(--gold); display: none; font-weight: bold; }
         .hidden { display: none !important; }
-        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--neon); }
+        input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--neon); }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid var(--neon); background: #020617; color: white; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -25,20 +27,20 @@
     <div id="authScreen" class="app">
         <div class="card">
             <h1>CRÓNICAS 7-70</h1>
-            <input type="text" id="inName" placeholder="Tu nombre" style="width:100%; padding:10px; margin:10px 0; border-radius:5px;">
-            <input type="password" id="inPass" placeholder="Clave secreta" style="width:100%; padding:10px; margin:10px 0; border-radius:5px;">
+            <input type="text" id="inName" placeholder="Tu nombre">
+            <input type="password" id="inPass" placeholder="Clave secreta">
             <button class="btn" onclick="auth()">INICIAR GESTA</button>
         </div>
     </div>
 
     <div id="mainApp" class="app hidden">
         <div class="card">
-            <h2 id="uNameDisplay" style="color:var(--neon); text-align:center; margin-top:0;">Guerrero</h2>
+            <h2 id="uNameDisplay" style="color:var(--neon); text-align:center; margin: 0 0 15px 0;">Guerrero</h2>
             
             <div class="week-nav">
-                <button class="btn" style="width:auto" onclick="move(-1)">◄</button>
-                <h3 id="weekLabel">Semana 1</h3>
-                <button class="btn" style="width:auto" onclick="move(1)">►</button>
+                <button class="btn" style="width:auto; margin:0;" onclick="move(-1)">◄</button>
+                <h3 id="weekLabel" style="margin:0;">Semana 1</h3>
+                <button class="btn" style="width:auto; margin:0;" onclick="move(1)">►</button>
             </div>
 
             <label class="mission"><input type="checkbox" id="t1" onchange="save()"> Leer Lección (5 pts)</label>
@@ -49,11 +51,11 @@
             <h3 style="color:var(--neon); margin:20px 0 10px 0;">Reinos Conquistados</h3>
             <div id="kingdomsArea"></div>
 
-            <h3 style="color:var(--neon); margin:20px 0 5px 0;">Diario (1pt/palabra, max 100)</h3>
+            <h3 style="color:var(--neon); margin:20px 0 5px 0;">Diario (1pt/palabra)</h3>
             <textarea id="diary" oninput="save()" placeholder="Escribe tus reflexiones..."></textarea>
             
-            <button class="btn" style="background:var(--gold);" onclick="seal()">SELLAR SEMANA</button>
-            <p id="ptsDisplay" style="font-size: 1.5rem; text-align:center; color:var(--gold); margin:20px 0;">Pts: 0</p>
+            <button class="btn" style="background:var(--gold); margin-top:20px;" onclick="seal()">SELLAR SEMANA</button>
+            <p id="ptsDisplay" style="font-size: 1.8rem; text-align:center; color:var(--gold); margin:20px 0;">Pts: 0</p>
             <button class="btn" style="background:#475569; color:white;" onclick="location.reload()">CERRAR SESIÓN</button>
         </div>
     </div>
@@ -110,15 +112,10 @@
             document.getElementById('ptsDisplay').innerText = "Pts: " + pts;
         }
 
-        function move(dir) {
-            cw = Math.max(1, Math.min(mw, cw + dir));
-            refresh();
-        }
+        function move(dir) { cw = Math.max(1, Math.min(mw, cw + dir)); refresh(); }
 
         function seal() {
-            if(confirm("¿Sellar semana " + cw + " y abrir nueva?")) {
-                mw++; S.setItem('mw', mw); cw = mw; refresh();
-            }
+            if(confirm("¿Sellar semana " + cw + " y abrir nueva?")) { mw++; S.setItem('mw', mw); cw = mw; refresh(); }
         }
 
         function refresh() {
