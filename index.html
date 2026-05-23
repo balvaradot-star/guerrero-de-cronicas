@@ -19,10 +19,11 @@
         input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 12px; margin: 5px 0; background: #020617; border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 16px; }
         textarea { height: 80px; resize: none; }
         .btn { width: 100%; padding: 14px; background: var(--neon); color: #020617; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; font-family: 'Cinzel'; text-transform: uppercase; }
+        .btn-link { background: #475569; color: white; margin-top: 10px; text-decoration: none; display: block; text-align: center; }
+        .btn-restart { background: #991b1b; color: white; margin-top: 10px; }
         .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .w-block { border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; }
         .w-title { color: var(--neon); font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; text-align: center; }
-        .credits { text-align: center; font-size: 0.7rem; color: #475569; margin-top: 20px; font-family: 'Cinzel'; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -34,6 +35,7 @@
     <input type="password" id="inPass" placeholder="Clave secreta">
     <select id="role"><option value="guerrero">Rol: Guerrero</option><option value="rey">Rol: Rey</option></select>
     <button class="btn" onclick="initApp()">INICIAR GESTA</button>
+    <a href="https://sites.google.com/view/cronicas-de-2-reinos/inicio" target="_blank" class="btn btn-link">VER MATERIALES</a>
 </div></div>
 
 <div id="mainApp" class="app hidden"><div class="card">
@@ -60,6 +62,8 @@
         <label class="k-item"><input type="checkbox" id="k5" onchange="save()"> Asiria (Vence el temor)</label>
     </div>
     
+    <a href="https://sites.google.com/view/cronicas-de-2-reinos/inicio" target="_blank" class="btn btn-link">VER MATERIALES</a>
+
     <h3 style="margin-top:20px;">Diario</h3>
     <textarea id="diary" oninput="save()" placeholder="Tus reflexiones..."></textarea>
 
@@ -69,12 +73,13 @@
     </div>
 
     <button class="btn" style="background:var(--gold)" onclick="sealWeek()">SELLAR SEMANA</button>
+    <button class="btn btn-restart" onclick="restartWeek()">REINICIAR SEMANA</button>
     <h2 id="ptsDisplay" style="color:var(--gold); margin-top:20px;">Total: 0 pts</h2>
     <button class="btn" style="background:#475569; color:white;" onclick="location.reload()">CERRAR SESIÓN</button>
 </div></div>
 
 <script>
-    let state = { name: '', pass: '', role: '', week: 1, maxW: 1 };
+    let state = { name: '', pass: '', role: '', week: 1, maxW: 1, isEditing: false };
 
     function initApp() {
         state.name = document.getElementById('inName').value;
@@ -82,7 +87,6 @@
         state.role = document.getElementById('role').value;
         if(!state.name || !state.pass) return alert("Completa los datos");
         
-        // Obtener hasta qué semana ha llegado el usuario
         state.maxW = parseInt(localStorage.getItem(`mw_${state.name}_${state.pass}`)) || 1;
         state.week = state.maxW;
         
@@ -99,13 +103,23 @@
         loadWeek();
     }
 
+    function restartWeek() {
+        if(!confirm("¿Seguro? Se borrarán los datos y podrás editar esta semana.")) return;
+        localStorage.removeItem(`cr_${state.name}_${state.pass}_w${state.week}`);
+        state.isEditing = true; // Activamos el modo edición
+        loadWeek();
+    }
+
     function changeWeek(d) {
         state.week = Math.max(1, state.week + d);
+        state.isEditing = false; // Al cambiar de semana, desactivamos modo edición
         loadWeek();
     }
 
     function save() {
-        if(state.week < state.maxW) return; // No guardar si consultamos semana pasada
+        // Permitimos guardar si es la semana actual O si está en modo edición
+        if(state.week < state.maxW && !state.isEditing) return;
+        
         let data = {
             t1: document.getElementById('t1').checked, t2: document.getElementById('t2').checked,
             t3: document.getElementById('t3').checked, t4: document.getElementById('t4').checked,
@@ -136,8 +150,9 @@
         if(state.role === 'rey') {
             for(let i=0; i<15; i++) document.getElementById('w'+i).value = d.warriors[i] || '';
         }
-        // Bloquear inputs si es una semana pasada
-        let isPast = state.week < state.maxW;
+        
+        // Solo bloquear si es semana pasada Y no está en modo edición
+        let isPast = (state.week < state.maxW) && !state.isEditing;
         document.querySelectorAll('input, textarea').forEach(i => i.disabled = isPast);
         calcPoints(d);
     }
@@ -150,8 +165,9 @@
 
     function sealWeek() {
         if(!confirm("¿Sellar semana " + state.week + "? Ya no podrás editarla.")) return;
+        state.isEditing = false; // Desactivamos modo edición al sellar
         save();
-        state.maxW++;
+        state.maxW = Math.max(state.maxW, state.week + 1);
         localStorage.setItem(`mw_${state.name}_${state.pass}`, state.maxW);
         state.week = state.maxW;
         loadWeek();
